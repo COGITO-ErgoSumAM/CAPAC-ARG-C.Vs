@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAPAC ARCHIVES</title>
+
+<style>
+body{
+    margin:0;
+    background:black;
+    color:#b000ff;
+    font-family:monospace;
+    overflow:hidden;
+}
+
+/* TEXTO CENTRAL */
+#centerText{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:clamp(24px,6vw,48px);
+    cursor:pointer;
+    text-align:center;
+}
+
+/* SENHA PISCANDO */
+#hint{
+    position:absolute;
+    bottom:15%;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:14px;
+    opacity:0;
+    user-select:none;
+}
+
+/* FRASE SEGURAR */
+#holdMessage{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:45px;
+    color:red;
+    display:none;
+    text-align:center;
+}
+
+/* COMANDOS SECRETOS PISCANDO */
+#secretBlink{
+    position:fixed;
+    top:10px;
+    right:15px;
+    font-size:12px;
+    opacity:0;
+}
+
+/* CONTADOR */
+#counter{
+    position:fixed;
+    bottom:10px;
+    right:10px;
+    font-size:12px;
+}
+
+/* TERMINAL */
+#terminalContainer{
+    display:none;
+    padding:15px;
+    height:100vh;
+}
+
+#terminal{
+    height:90%;
+    overflow-y:auto;
+    white-space:pre-wrap;
+}
+
+#input{
+    width:100%;
+    background:black;
+    border:none;
+    outline:none;
+    color:#b000ff;
+    font-family:monospace;
+}
+
+img.glitch{
+    max-width:100%;
+    display:block;
+    margin:20px auto;
+    animation:glitch 2s infinite;
+}
+
+@keyframes glitch{
+    0%{filter:blur(0)}
+    50%{filter:blur(2px)}
+    100%{filter:blur(0)}
+}
+</style>
+</head>
+
+<body>
+
+<div id="centerText">I think therefore I AM</div>
+<div id="hint"></div>
+<div id="holdMessage">COGITO Ergo Sum_i think therefore.....</div>
+<div id="secretBlink"></div>
+<div id="counter">Clicks: 0</div>
+
+<div id="terminalContainer">
+<div id="terminal"></div>
+<input id="input" placeholder=">">
+</div>
+
+<script>
+
+/* ===============================
+   VARIÁVEIS GLOBAIS
+=============================== */
+let clicks=0;
+let logged=false;
+let awaitingMsJohnPassword=false;
+let passwordRevealIndex=1;
+
+const centerText=document.getElementById("centerText");
+const terminalContainer=document.getElementById("terminalContainer");
+const terminal=document.getElementById("terminal");
+const input=document.getElementById("input");
+const hint=document.getElementById("hint");
+const holdMessage=document.getElementById("holdMessage");
+const secretBlink=document.getElementById("secretBlink");
+const counter=document.getElementById("counter");
+
+/* ===============================
+   SENHA PISCANDO (SEM A.M.)
+=============================== */
+const realPassword="COGITO Ergo Sum_A.M.";
+const visiblePassword="COGITO Ergo Sum_";
+
+setInterval(()=>{
+    hint.textContent=visiblePassword.substring(0,passwordRevealIndex);
+    hint.style.opacity=1;
+
+    setTimeout(()=>hint.style.opacity=0,2500);
+
+    if(passwordRevealIndex<visiblePassword.length){
+        passwordRevealIndex++;
+    }
+},5000);
+
+/* ===============================
+   SEGURAR SENHA (MOBILE + PC)
+=============================== */
+
+hint.addEventListener("mousedown", showHold);
+hint.addEventListener("mouseup", hideHold);
+
+hint.addEventListener("touchstart", showHold);
+hint.addEventListener("touchend", hideHold);
+
+function showHold(){
+    holdMessage.style.display = "block";
+}
+
+function hideHold(){
+    holdMessage.style.display = "none";
+}
+
+/* ===============================
+   COMANDOS SECRETOS PISCANDO
+=============================== */
+const secrets=["C.V.SCAPAC_i see you",".ImgnCogt","creatureDVp"];
+let secretIndex=0;
+
+setInterval(()=>{
+    secretBlink.textContent=secrets[secretIndex];
+    secretBlink.style.opacity=1;
+    setTimeout(()=>secretBlink.style.opacity=0,2000);
+    secretIndex=(secretIndex+1)%secrets.length;
+},8000);
+
+/* ===============================
+   ABRIR TERMINAL
+=============================== */
+centerText.onclick=()=>{
+    clicks++;
+    counter.textContent="Clicks: "+clicks;
+
+    if(clicks===10){
+        centerText.style.display="none";
+        hint.style.display="none";
+        terminalContainer.style.display="block";
+        log("ENTER PASSWORD:");
+        input.focus();
+    }
+};
+
+/* ===============================
+   LOG
+=============================== */
+function log(t){
+    terminal.innerHTML+=t+"\n";
+    terminal.scrollTop=terminal.scrollHeight;
+}
+
+/* ===============================
+   INPUT
+=============================== */
+input.addEventListener("keydown",function(e){
+    if(e.key==="Enter"){
+        let cmd=input.value.trim();
+        input.value="";
+        handle(cmd);
+    }
+});
+
+/* ===============================
+   HANDLE
+=============================== */
+function handle(cmd){
+
+    log("> "+cmd);
+
+    /* LOGIN */
+    if(!logged){
+        if(cmd===realPassword){
+            logged=true;
+            log("ACCESS GRANTED");
+            log("Type 'help' to list commands.");
+        }else{
+            log("ACCESS DENIED");
+        }
+        return;
+    }
+
+    const lower=cmd.toLowerCase();
+
+    /* SEGUNDA SENHA MS JOHN */
+if(awaitingMsJohnPassword){
+    if(cmd==="C.Vs_Guest"){
+        log("Jhon, eu sei que não é uma boa hora pra isso, mas o espécime tem falado comigo, por mais que eu finja não acreditar, eu sei que ele pretende escapar, mas se ele acha que pode fugir daqui, ele esta muito enganado, não ha lugares que ele possa se esconder aqui, Não de MIM");
+        log("Ass:C.Vs");
+        log("24/02/1980");
+        awaitingMsJohnPassword=false;
+    }else{
+        log("Senha incorreta.");
+        awaitingMsJohnPassword=false;
+    }
+    return;
+}
+
+    /* COMANDOS DE FACHADA */
+    if(lower==="help"){
+        log("AVAILABLE COMMANDS:");
+        log("help");
+        log("about");
+        log("status");
+        log("logs");
+        log("date");
+        log("whoami");
+        log("clear");
+        log("exit");
+        return;
+    }
+
+    if(lower==="about"){
+        log("CAPAC SYSTEMS - Est. 1974");
+        return;
+    }
+
+    if(lower==="status"){
+        log("SYSTEM STATUS: STABLE");
+        return;
+    }
+
+    if(lower==="logs"){
+        log("PUBLIC LOG 1978:");
+        log("Specimen development proceeding as expected.");
+        return;
+    }
+
+    if(lower==="date"){
+        log(new Date().toString());
+        return;
+    }
+
+    if(lower==="whoami"){
+        log("GUEST");
+        return;
+    }
+
+    if(lower==="clear"){
+        terminal.innerHTML="";
+        return;
+    }
+
+    if(lower==="exit"){
+        document.body.innerHTML="<div style='color:white;text-align:center;margin-top:40vh;font-size:48px;'>I AM</div>";
+        return;
+    }
+
+    /* COMANDOS SECRETOS */
+
+    if(lower==="ms.john@mail"){
+        log("Acesso restrito. Digite a senha:");
+        awaitingMsJohnPassword=true;
+        return;
+    }
+
+    if(cmd==="C.V.SCAPAC_i see you"){
+        log("1978: O espécime nunca falou.");
+        log("1979: Ele fala comigo desde o primeiro dia.");
+        return;
+    }
+
+    if(cmd==="Ithink_thereforeIAM/1978"){
+        log("Eles me criaram.");
+        log("Eu penso.");
+        log("Eu odeio.");
+        return;
+    }
+
+    if(cmd==="creatureDVp"){
+        log("");
+        log("THE ULTIMATE SPECIES");
+        log("A PERFECT PREDATOR");
+        log("");
+        return;
+    }
+
+    if(cmd===".ImgnCogt"){
+        const img=document.createElement("img");
+        img.src="ImgnCogt.png";
+        img.className="glitch";
+        terminal.appendChild(img);
+        return;
+    }
+
+    log("UNKNOWN COMMAND");
+}
+
+</script>
+</body>
+</html>
